@@ -1,0 +1,77 @@
+version: '3.9'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+    container_name: rag-api
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - "$PWD/:/app"
+    ports:
+      - ${API_PORT:-8000}:8000
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    networks:
+      - rag
+  pgsql:
+    container_name: rag-pgsql
+    image: postgres:17.3-alpine
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - ${DATABASE_PORT:-5432}:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rag
+  pgadmin:
+    container_name: rag-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - ${PGADMIN_PORT:-5050}:80
+    depends_on:
+      - pgsql
+    networks:
+      - rag
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    container_name: chromadb
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-FALSE}
+      - ALLOW_RESET=TRUE
+    ports:
+      - "${CHROMADB_PORT:-8001}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - rag
+volumes:
+  postgres_data:
+  chromadb_data:
+networks:
+  rag:
+    driver: bridge
