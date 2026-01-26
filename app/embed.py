@@ -27,17 +27,18 @@ def handle_notion_webhook(payload: dict):
         return {"status": "ignored"}
     
     # проверяем в зависимости от parent_id в какую коллекцию сохранять данные
-    collection_name = "student_data" if parent_id == "2ed95e3f-0bdf-801c-85ab-f425ca0d43bc" else "applicant_data"
+    collection_name = "student_data" if parent_id == "2ed95e3f-0bdf-80bf-b508-f5e4ec96544f" else "applicant_data"
     collection = get_collection(collection_name)
-
+    print(f"Handling Notion event: {event} for page_id: {page_id} in collection: {collection_name}")
     if event == "page.deleted":
         collection.delete(ids=[page_id])
         return {"status": "deleted", "id": page_id}
 
     if event in ("page.created", "page.content_updated"):
+        print(f"Fetching blocks for page_id: {page_id}")
         blocks = fetch_page_blocks(page_id)
         text = "\n".join(blocks)
-
+        print(f"Upserting text for page_id: {page_id}, text length: {len(text)}")
         if not text.strip():
             return {"status": "empty"}
 
@@ -46,7 +47,8 @@ def handle_notion_webhook(payload: dict):
             documents=[text],
             metadatas=[{"source": "notion"}],
         )
-
+        
+        print(f"Upserted page_id: {page_id} into collection: {collection_name}")
         return {"status": "upserted", "id": page_id}
 
     return {"status": "ignored", "event": event}

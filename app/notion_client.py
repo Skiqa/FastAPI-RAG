@@ -21,8 +21,9 @@ def fetch_page_blocks(page_id: str) -> list[str]:
         r = requests.get(url, headers=HEADERS)
         r.raise_for_status()
         data = r.json()
-
+        print("DATA:", data)
         for block in data["results"]:
+            print("BLOCK:", block)
             text = extract_text(block)
             if text:
                 texts.append(text)
