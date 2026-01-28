@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-NOTION_INTEGRATION_SECRET = os.getenv("NOTION_INTEGRATION_SECRET")
-
 HEADERS = {
-    "Authorization": f"Bearer {NOTION_INTEGRATION_SECRET}",
+    "Authorization": "Bearer " + os.getenv("NOTION_INTEGRATION_SECRET"),
     "Notion-Version": os.getenv("NOTION_VERSION"),
     "Content-Type": "application/json",
 }
@@ -21,7 +19,7 @@ def fetch_page_blocks(page_id: str) -> list[str]:
         r = requests.get(url, headers=HEADERS)
         r.raise_for_status()
         data = r.json()
-        print("DATA:", data)
+
         for block in data["results"]:
             print("BLOCK:", block)
             text = extract_text(block)

@@ -15,6 +15,3 @@ client = chromadb.HttpClient(
         anonymized_telemetry=False
     )
 )
-
-def get_collection(name: str):
-    return client.get_or_create_collection(name)

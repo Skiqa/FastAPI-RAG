@@ -22,7 +22,7 @@ async def notion_webhook(
     # логирование запроса от notion
     print(body.decode("utf-8", errors="ignore"))
 
-    # валидация подписи
+    # валидация подписи (вынести)
     if os.getenv("NOTION_VERIFICATION_TOKEN"):
         if not x_notion_signature:
             raise HTTPException(400, "Missing signature")
@@ -31,7 +31,9 @@ async def notion_webhook(
     payload = await request.json()
     if "verification_token" in payload:
         return {"verification_token": payload["verification_token"]}
+    
     result = handle_notion_webhook(payload)
+    # добавить логирование
     return JSONResponse(result)
 
 
@@ -42,17 +44,20 @@ async def ai_handler(
 ):
     body = await request.json()
 
+    # заменит на нормальную валидацию
     if "message" not in body:
         raise HTTPException(400, "message field required")
 
-    answer = process_user_query(
+    resp = process_user_query(
         text=body["message"],
         role=role
     )
 
+    # добавить проверку ответа
+
     return {
         "status": "ok",
-        "answer": answer,
+        "content": resp['message']['content'],
     }
 
 @app.get("/api/v1/health")

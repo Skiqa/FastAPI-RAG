@@ -1,7 +1,7 @@
 import requests
 import os
-from sentence_transformers import SentenceTransformer, util
-from .chroma_client import client as chroma, get_collection
+from sentence_transformers import SentenceTransformer
+from .chroma_client import client as chroma
 from ollama import Client as ollama, ChatResponse
 from .utils import load_file
 
@@ -19,21 +19,15 @@ COLLEGE_PROMPT = load_file("prompts/rag.txt")
 
 college_emb = model.encode(COLLEGE_PROMPT, convert_to_tensor=True)
 
-def ask_ollama(prompt: str, model: str) -> str:
-    response: ChatResponse = ollama.chat(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return response['message']['content']
-
-def process_user_query(text: str, role: str) -> dict:
+def process_user_query(query: str, role: str) -> dict:
+    # Заменить на нормальную логику выбора коллекции
     if role == "student":
-        collection = get_collection("applicant_data")
+        collection = chroma.get_collection("applicant_data")
     else:
-        collection = get_collection("applicant_data")
+        collection = chroma.get_collection("applicant_data")
 
     results = collection.query(
-        query_texts=[text],
+        query_texts=[query],
         n_results=5
     )
 
@@ -46,11 +40,14 @@ def process_user_query(text: str, role: str) -> dict:
                 {context}
 
                 Вопрос:
-                {text}
+                {query}
                 """
+    
     print("Final prompt for Ollama:", final_prompt)
+
     response: ChatResponse = ollama.chat(
-        model="qwen3:4b",
+        model="qwen3:4b", # заменить на динамичную
         messages=[{"role": "user", "content": final_prompt}],
     )
-    return response['message']['content']
+
+    return response
