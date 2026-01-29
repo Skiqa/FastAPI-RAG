@@ -1,0 +1,2 @@
+OLLAMA_MODEL = "gemma3:1b"
+OLLAMA_TIMEOUT = 120

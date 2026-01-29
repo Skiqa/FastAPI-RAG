@@ -17,3 +17,4 @@ run-tunnel:
 ## Зайти в контейнер с FastAPI
 dev-exec-app:
 	$(DOCKERCOMPOSE) exec app bash
+
