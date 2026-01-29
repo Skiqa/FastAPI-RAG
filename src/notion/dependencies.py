@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 async def verify_notion_signature(
     request: Request,
     x_notion_signature: str = Header(..., alias="x-notion-signature"),
-):
+) -> bool:
     body = await request.body()
 
     payload = await request.json()

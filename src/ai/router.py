@@ -11,10 +11,10 @@ router = APIRouter()
 @router.post("/chat")
 async def chat(
     request: Request,
-):
+) -> JSONResponse:
     body = await request.json()
 
-    # заменит на нормальную валидацию
+    # TODO:: заменить на нормальную валидацию
     if "message" not in body:
         raise HTTPException(400, "message field required")
 

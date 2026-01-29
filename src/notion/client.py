@@ -1,12 +1,5 @@
 import requests
-from src.config import NOTION_INTEGRATION_SECRET
-from src.notion.constants import NOTION_API_URL, NOTION_VERSION
-
-HEADERS = {
-    "Authorization": NOTION_INTEGRATION_SECRET,
-    "Notion-Version": NOTION_VERSION,
-    "Content-Type": "application/json",
-}
+from src.notion.constants import NOTION_API_URL, HEADERS
 
 def fetch_page_blocks(page_id: str) -> list[str]:
     url = f"{NOTION_API_URL}/blocks/{page_id}/children"
