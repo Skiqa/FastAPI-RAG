@@ -26,7 +26,7 @@ def process_user_query(query: str) -> dict:
 {query}
 """
     if APP_ENV == "development":
-        print("Full promt: {}".format(prompt))
+        print("Full prompt: {}".format(prompt))
 
     response = chat(prompt)
 

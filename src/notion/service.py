@@ -17,6 +17,7 @@ def validate_signature(body: bytes, signature: str) -> bool:
     expected = f"sha256={mac.hexdigest()}"
     return hmac.compare_digest(expected, signature)
 
+# TODO:: неэфектино — оптимизировать
 def handle_notion_webhook(payload: dict):
     event = payload.get("type")
     page_id = payload.get("entity", {}).get("id")
