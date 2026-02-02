@@ -12,3 +12,4 @@ NOTION_VERIFICATION_TOKEN: str = config("NOTION_VERIFICATION_TOKEN")
 
 OLLAMA_HOST: str = config("OLLAMA_HOST", default="http://localhost")
 OLLAMA_PORT: int = config("OLLAMA_PORT", cast=int, default=11434)
+OLLAMA_MODEL: str = config("OLLAMA_MODEL", cast=str)

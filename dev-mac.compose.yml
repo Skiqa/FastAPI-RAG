@@ -1,9 +1,7 @@
 version: '3.9'
 services:
   app:
-    build:
-      context: .
-      dockerfile: docker/python/Dockerfile
+    image: "PYTHON_DEV_IMAGE"
     container_name: rag-api
     restart: always
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload

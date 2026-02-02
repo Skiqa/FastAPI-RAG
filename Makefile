@@ -1,14 +1,9 @@
 include .env
 
-COMPOSE_FILE := dev-mac.compose.yml
+PYTHON_DEV_IMAGE=python:3.11
+DOCKERCOMPOSE=docker-compose -f dev-mac.compose.yml
 
-ifeq ($(APP_ENV),production)
-COMPOSE_FILE := prod-compose.yml
-endif
-
-DOCKERCOMPOSE := docker-compose -f $(COMPOSE_FILE)
-
-.PHONY: run-tunnel dev-exec-app
+.PHONY: run-tunnel dev-exec-app dev-start
 
 ## Запустить SSH туннель для webhook
 run-tunnel:
@@ -18,3 +13,9 @@ run-tunnel:
 dev-exec-app:
 	$(DOCKERCOMPOSE) exec app bash
 
+# Запустить проект
+dev-start:
+    $(DOCKERCOMPOSE) PYTHON_DEV_IMAGE=$(PYTHON_DEV_IMAGE) --force-recreate --build
+
+dev-build-app:
+    @docker build -t $(PYTHON_DEV_IMAGE) -f docker/python/Dockerfile docker/images

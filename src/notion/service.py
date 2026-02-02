@@ -5,7 +5,7 @@ import logging
 from src.config import NOTION_VERIFICATION_TOKEN
 from src.notion.client import fetch_page_blocks
 from src.chroma.client import client as chroma
-from src.notion.constants import NotionEventType
+from src.notion.schemas import NotionEventType
 
 log = logging.getLogger(__name__)
 
@@ -18,11 +18,10 @@ def validate_signature(body: bytes, signature: str) -> bool:
     expected = f"sha256={mac.hexdigest()}"
     return hmac.compare_digest(expected, signature)
 
-# TODO:: добавить DTO и разделить логику по событиям
+# TODO:: разделить логику по событиям
 def handle_notion_webhook(payload: dict)-> None:
     event = payload.get("type")
     page_id = payload.get("entity", {}).get("id")
-    # parent_id = payload.get("data", {}).get("parent", {}).get("page_id")
 
     if not page_id:
         log.warning("No page_id found in payload")

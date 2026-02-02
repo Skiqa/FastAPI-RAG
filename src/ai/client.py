@@ -1,6 +1,7 @@
 from ollama import Client, ChatResponse, ResponseError
 from src.config import OLLAMA_HOST, OLLAMA_PORT
-from src.ai.constants import OLLAMA_MODEL, OLLAMA_TIMEOUT
+from src.ai.constants import OLLAMA_TIMEOUT
+from src.config import OLLAMA_MODEL
 
 client = Client(
     host=f"{OLLAMA_HOST}:{OLLAMA_PORT}",

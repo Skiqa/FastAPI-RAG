@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, Depends, Request, BackgroundTasks, status
 from fastapi.responses import JSONResponse
-from src.notion.service import validate_signature, handle_notion_webhook
+from src.notion.service import handle_notion_webhook
 from src.notion.dependencies import verify_notion_signature
 from src.config import APP_ENV
 
@@ -22,4 +22,6 @@ async def notion_webhook(
 
     background_tasks.add_task(handle_notion_webhook, payload)
 
-    return JSONResponse(status_code=status.HTTP_200_OK)
+    return JSONResponse(status_code=status.HTTP_200_OK, content={
+        "status": "ok",
+    })

@@ -1,2 +1,1 @@
-OLLAMA_MODEL = "deepseek-r1:8b"
 OLLAMA_TIMEOUT = 60
